@@ -1,4 +1,4 @@
-describe('cassandra custom and imported features', function () {
+describe('imported features', function () {
 
   before(function () {
     require('./init.js');
