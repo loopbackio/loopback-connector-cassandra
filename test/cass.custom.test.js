@@ -85,6 +85,7 @@ describe('cassandra custom tests', function() {
     function(err, info) {
       should.not.exist(err);
       should.exist(info);
+      should.not.exist(info.count);
       // however, info.count is not set. :-(
       // info.count.should.be.type('number');
       done();
@@ -123,12 +124,10 @@ describe('cassandra custom tests', function() {
   it('destroyAll without id', function(done) {
     CASS.destroyAll({},
     function(err, info) {
-      // should.not.exist(err);
-      // should.exist(info);
+      should.not.exist(err);
+      should.not.exist(info.count);
+      // however, info.count is not set. :-(
       // info.count.should.be.type('number');
-      // however, CASS requires id to be set
-      // if not, use TRUNCATE
-      should.exist(err);
       done();
     });
   });
