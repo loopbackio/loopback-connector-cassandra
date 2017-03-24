@@ -27,27 +27,44 @@ describe('cassandra custom tests', function() {
         return done(err);
       }
       CASS_SORTABLE = db.define('CASS_SORTABLE', {
+        patBool: {type: Boolean, id: 2},
         str: String,
+        patStr: {type: String, id: true},
         num: Number,
+        patNum: {type: Number, id: 1},
         }, {
         cassandra: {
-          clusteringKeys: ['str'],
+          clusteringKeys: ['str', 'num DESC'],
           },     
         });
       db.automigrate(['CASS_SORTABLE'], done);
       }.bind(done));   
   });
 
-  function verifyTheDefaultRow(err, m) {
+  function verifyTheDefaultRows(err, m) {
     should.not.exists(err);
     should.exist(m && m.id);
     should.exist(m && m.str);
     should.exist(m && m.num);
     m.str.should.be.type('string');
-    m.str.should.equal(cassTestString);
+    m.str.indexOf(cassTestString).should.be.aboveOrEqual(0);
     m.num.should.be.type('number');
-    m.num.should.equal(cassTestNum);    
-  }
+    m.num.should.be.aboveOrEqual(cassTestNum);    
+ }
+
+  function verifyExtraRows(err, m) {
+    should.not.exists(err);
+    should.exist(m && m.patBool);
+    should.exist(m && m.patNum);
+    should.exist(m && m.patStr);
+    m.patBool.should.be.type('boolean');
+    m.patBool.should.equal(true);
+    m.patNum.should.be.type('number');
+    m.patNum.should.equal(100);
+    m.patStr.should.be.type('string');
+    m.patStr.should.equal(cassTestString + '100');
+ }
+
 
   // http://apidocs.strongloop.com/loopback/#persistedmodel-create
   it('create', function(done) {
@@ -55,7 +72,7 @@ describe('cassandra custom tests', function() {
       str: cassTestString,
       num: cassTestNum,
     }, function(err, m) {
-      verifyTheDefaultRow(err, m);
+      verifyTheDefaultRows(err, m);
       ROW = m;
       ID = m.id;
       done();
@@ -65,7 +82,7 @@ describe('cassandra custom tests', function() {
   // http://apidocs.strongloop.com/loopback/#persistedmodel-findbyid
   it('findOne', function(done) {
     CASS.findOne({where: {id: ID}}, function(err, m) {
-      verifyTheDefaultRow(err, m);
+      verifyTheDefaultRows(err, m);
       done();
     });
   });
@@ -74,7 +91,7 @@ describe('cassandra custom tests', function() {
   it('findById', function(done) {
     CASS.findById(ID,
     {}, {}, function(err, m) {
-      verifyTheDefaultRow(err, m);
+      verifyTheDefaultRows(err, m);
       done();
     });
   });
@@ -93,12 +110,12 @@ describe('cassandra custom tests', function() {
   });
 
   // http://apidocs.strongloop.com/loopback/#persistedmodel-create
-  it('create', function(done) {
+  it('re-create', function(done) {
     CASS.create({
       str: cassTestString,
       num: cassTestNum,
     }, function(err, m) {
-      verifyTheDefaultRow(err, m);
+      verifyTheDefaultRows(err, m);
       ROW = m;
       ID = m.id;
       done();
@@ -132,76 +149,89 @@ describe('cassandra custom tests', function() {
     });
   });
 
-  var ID_1, ID_2;
+  var ID_1;
 
-  it('create', function(done) {
+  it('create sortable 1', function(done) {
     CASS_SORTABLE.create({
       str: cassTestString + '10',
       num: 10,
+      patBool: true,
+      patNum: 100,
+      patStr: cassTestString + '100',
     }, function(err, m) {
-      should.not.exists(err);
-      should.exist(m && m.id);
-      should.exist(m && m.str);
-      should.exist(m && m.num);
+      verifyTheDefaultRows(err, m);
+      verifyExtraRows(err, m);
+      m.id.should.not.have.property('id');
+      m.id.should.have.properties(
+        {patStr: 'cassandra test string data100',
+        patNum: 100,
+        patBool: true });
       ID_1 = m.id;
       done();
     });
   });
 
-  it('create', function(done) {
+  it('create sortable 2', function(done) {
     CASS_SORTABLE.create({
       str: cassTestString + '20',
       num: 20,
+      patBool: true,
+      patNum: 100,
+      patStr: cassTestString + '100',
     }, function(err, m) {
-      should.not.exists(err);
-      should.exist(m && m.id);
-      should.exist(m && m.str);
-      should.exist(m && m.num);
-      ID_2 = m.id;
+      verifyTheDefaultRows(err, m);
+      verifyExtraRows(err, m);
+      m.id.should.have.properties(ID_1);
+      m.id.should.not.have.property('id');
+      m.id.should.have.properties(
+        {patStr: 'cassandra test string data100',
+        patNum: 100,
+        patBool: true });
       done();
     });
   });
 
-  it('find and order by str ASC', function(done) {
+  it('create sortable 3', function(done) {
+    CASS_SORTABLE.create({
+      str: cassTestString + '20',
+      num: 30,
+      patBool: true,
+      patNum: 100,
+      patStr: cassTestString + '100',
+    }, function(err, m) {
+      verifyTheDefaultRows(err, m);
+      verifyExtraRows(err, m);
+      m.id.should.have.properties(ID_1);
+      m.id.should.not.have.property('id');
+      m.id.should.have.properties(
+        {patStr: 'cassandra test string data100',
+        patNum: 100,
+        patBool: true });
+      done();
+    });
+  });
+
+  it('find and order by str', function(done) {
     CASS_SORTABLE.find(
       {where: {id: ID_1},
-      order: 'str ASC'}, function(err, rows) {
+      order: 'str'}, function(err, rows) {
         should.not.exist(err);
-        rows.should.have.length(1);
-        rows[0].num.should.eql(10);
+        rows.should.have.length(3); // str ASC
+        rows[0].str.should.eql('cassandra test string data10');
+        rows[1].str.should.eql('cassandra test string data20');
+        rows[2].str.should.eql('cassandra test string data20');
         done();
       });
   });
 
-  it('find and order by str DESC', function(done) {
+  it('find and order by num', function(done) {
     CASS_SORTABLE.find(
-      {where: {id: ID_1},
-      order: 'str DESC'}, function(err, rows) {
+      {where: {and: [{id: ID_1},{str: 'cassandra test string data20'}]},
+      order: 'num'}, function(err, rows) {
         should.not.exist(err);
-        rows.should.have.length(1);
-        rows[0].num.should.eql(10);
-        done();
-      });
-  });
-
-  it('find with num and order by str ASC', function(done) {
-    CASS_SORTABLE.find(
-      {where: {and: [{id: ID_1},{num: 10}]},
-      order: 'str ASC'}, function(err, rows) {
-        should.not.exist(err);
-        rows.should.have.length(1);
-        rows[0].num.should.eql(10);
-        done();
-      });
-  });
-
-  it('find and order by str DESC', function(done) {
-    CASS_SORTABLE.find(
-      {where: {and: [{id: ID_1},{num: 10}]},
-      order: 'str DESC'}, function(err, rows) {
-        should.not.exist(err);
-        rows.should.have.length(1);
-        rows[0].num.should.eql(10);
+        rows.should.have.length(2); // num DESC
+        rows[0].num.should.eql(30);
+        rows[1].num.should.eql(20);
         done();
       });
   });
