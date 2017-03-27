@@ -32,6 +32,7 @@ describe('cassandra custom tests', function() {
         patStr: {type: String, id: true},
         num: Number,
         patNum: {type: Number, id: 1},
+        yearMonth: {type: String, index: true},
         }, {
         cassandra: {
           clusteringKeys: ['str', 'num DESC'],
@@ -232,6 +233,73 @@ describe('cassandra custom tests', function() {
         rows.should.have.length(2); // num DESC
         rows[0].num.should.eql(30);
         rows[1].num.should.eql(20);
+        done();
+      });
+  });
+
+  it('create sortable 4', function(done) {
+    CASS_SORTABLE.create({
+      str: cassTestString + '50',
+      num: 40,
+      patBool: true,
+      patNum: 100,
+      patStr: cassTestString + '100',
+      yearMonth: '2015-03',
+    }, function(err, m) {
+      verifyTheDefaultRows(err, m);
+      verifyExtraRows(err, m);
+      m.id.should.have.properties(ID_1);
+      m.id.should.not.have.property('id');
+      m.should.have.properties({yearMonth: '2015-03'});
+      done();
+    });
+  });
+
+  it('create sortable 5', function(done) {
+    CASS_SORTABLE.create({
+      str: cassTestString + '50',
+      num: 50,
+      patBool: true,
+      patNum: 100,
+      patStr: cassTestString + '100',
+      yearMonth: '2015-04',
+    }, function(err, m) {
+      verifyTheDefaultRows(err, m);
+      verifyExtraRows(err, m);
+      m.id.should.have.properties(ID_1);
+      m.id.should.not.have.property('id');
+      m.should.have.properties({yearMonth: '2015-04'});
+      done();
+    });
+  });
+
+  it('create sortable 6', function(done) {
+    CASS_SORTABLE.create({
+      str: cassTestString + '50',
+      num: 60,
+      patBool: true,
+      patNum: 100,
+      patStr: cassTestString + '100',
+      yearMonth: '2015-04',
+    }, function(err, m) {
+      verifyTheDefaultRows(err, m);
+      verifyExtraRows(err, m);
+      m.id.should.have.properties(ID_1);
+      m.id.should.not.have.property('id');
+      m.should.have.properties({yearMonth: '2015-04'});
+      done();
+    });
+  });
+
+ it('find by secondary key without primary key', function(done) {
+    CASS_SORTABLE.find(
+      {where: {yearMonth: '2015-04'}}, function(err, rows) {
+        should.not.exist(err);
+        rows.should.have.length(2); // num DESC
+        rows[0].str.should.eql(cassTestString + '50');
+        rows[1].str.should.eql(rows[0].str);
+        rows[0].num.should.be.eql(60);
+        rows[1].num.should.be.eql(50);
         done();
       });
   });
