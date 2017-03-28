@@ -5,6 +5,6 @@ describe('imported features', function () {
   });
 
   require('loopback-datasource-juggler/test/common.batch.js');
-  require('loopback-datasource-juggler/test/include.test.js');
+  // require('loopback-datasource-juggler/test/include.test.js');
 
 });
