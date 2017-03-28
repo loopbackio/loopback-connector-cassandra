@@ -1,5 +1,5 @@
-// Copyright IBM Corp. 2013,2016. All Rights Reserved.
-// Node module: loopback-datasource-juggler
+// Copyright IBM Corp. 2017. All Rights Reserved.
+// Node module: loopback-connector-cassandra
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
