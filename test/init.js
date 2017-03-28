@@ -19,6 +19,22 @@ global.connectorCapabilities = {
   ilike: false,
   nilike: false,
   nestedProperty: false,
+  adhocSort: false,
+  supportInq: false,
+  reportDeletedCount: false,
+  deleteWithOtherThanId: false,
+  updateWithOtherThanId: false,
+  supportOrOperator: false,
+  refuseDuplicateInsert: false,
+  supportForceId: false,
+  updateWithoutId: false,
+  ignoreUndefinedConditionValue: false,
+  supportStrictDelete: false,
+  supportPagination: false,
+  supportNonPrimaryKeyIN: false,
+  supportUpdateWithoutId: false,
+  supportInclude: false,
+  supportGeoPoint: false,
 };
 
 global.sinon = require('sinon');

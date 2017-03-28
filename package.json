@@ -11,19 +11,20 @@
   ],
   "main": "index.js",
   "scripts": {
+    "pretest": "node test/setupDb.js",
     "test": "mocha -R spec --timeout 10000 --require test/init.js test/*.test.js"
   },
   "dependencies": {
     "async": "^1.4.2",
     "cassandra-driver": "^3.2.0",
     "debug": "^2.2.0",
-    "loopback-connector": "^2.3.0",
+    "loopback-connector": "^4.0.0",
     "should": "^11.2.0",
     "strong-globalize": "^2.8.2"
   },
   "devDependencies": {
     "bluebird": "^2.9.34",
-    "loopback-datasource-juggler": "^2.36.0",
+    "loopback-datasource-juggler": "^3.4.1",
     "mocha": "^2.2.5",
     "rc": "^1.1.0",
     "should": "^7.0.3",
