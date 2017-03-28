@@ -34,8 +34,5 @@
     "type": "git",
     "url": "https://github.com/strongloop/loopback-connector-cassandra.git"
   },
-  "license": "MIT",
-  "optionalDependencies": {
-    "sl-blip": "http://blip.strongloop.com/loopback-connector-cassandra@1.0.0"
-  }
+  "license": "MIT"
 }
