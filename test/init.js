@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2015,2017. All Rights Reserved.
+// Node module: loopback-connector-cassandra
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var DataSource = require('loopback-datasource-juggler').DataSource;
 
 var config = require('rc')('loopback', {test: {cassandra: {
