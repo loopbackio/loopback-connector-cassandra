@@ -8,38 +8,40 @@
 
 /* global getSchema:false */
 
+var cassandra = require('cassandra-driver');
 var should = require('should');
 
-var db = getSchema(), CASS, CASS_SORTABLE;
+var db, CASS, CASS_SORTABLE, CASS_TUPLE_TIME;
 var ID, ROW;
 var cassTestString = 'cassandra test string data';
 var cassTestNum = 3;
 
 describe('cassandra custom tests', function() {
   before(function(done) {
+    db = getSchema();
     CASS = db.define('CASS', {
       str: String,
       num: Number,
       });
-    db.automigrate(['CASS'], function(err) {
-      var done = this;
-      if (err) {
-        return done(err);
-      }
-      CASS_SORTABLE = db.define('CASS_SORTABLE', {
-        patBool: {type: Boolean, id: 2},
-        str: String,
-        patStr: {type: String, id: true},
-        num: Number,
-        patNum: {type: Number, id: 1},
-        yearMonth: {type: String, index: true},
-        }, {
-        cassandra: {
-          clusteringKeys: ['str', 'num DESC'],
-          },     
-        });
-      db.automigrate(['CASS_SORTABLE'], done);
-      }.bind(done));   
+    CASS_SORTABLE = db.define('CASS_SORTABLE', {
+      patBool: {type: Boolean, id: 2},
+      str: String,
+      patStr: {type: String, id: true},
+      num: Number,
+      patNum: {type: Number, id: 1},
+      yearMonth: {type: String, index: true},
+      }, {
+      cassandra: {
+        clusteringKeys: ['str', 'num DESC'],
+        },
+      });
+    CASS_TUPLE_TIME = db.define('CASS_TUPLE_TIME', {
+      tuple: {type: 'Tuple'},
+      str: String,
+      num: Number,
+      time: {type: 'TimeUuid', id: true},
+      });
+    db.automigrate(['CASS', 'CASS_SORTABLE', 'CASS_TUPLE_TIME'], done);
   });
 
   function verifyTheDefaultRows(err, m) {
@@ -90,8 +92,7 @@ describe('cassandra custom tests', function() {
 
   // http://apidocs.strongloop.com/loopback/#persistedmodel-findbyid
   it('findById', function(done) {
-    CASS.findById(ID,
-    {}, {}, function(err, m) {
+    CASS.findById(ID, function(err, m) {
       verifyTheDefaultRows(err, m);
       done();
     });
@@ -291,7 +292,7 @@ describe('cassandra custom tests', function() {
     });
   });
 
- it('find by secondary key without primary key', function(done) {
+  it('find by secondary key without primary key', function(done) {
     CASS_SORTABLE.find(
       {where: {yearMonth: '2015-04'}}, function(err, rows) {
         should.not.exist(err);
@@ -302,6 +303,52 @@ describe('cassandra custom tests', function() {
         rows[1].num.should.be.eql(50);
         done();
       });
+  });
+
+  var ID_2, savedTuple, savedTimeUuid;
+  var origTupleArray = ['USA', 'California', 'San Francisco', 'Market St.'];
+  var origTuple = cassandra.types.Tuple.fromArray(origTupleArray);
+  var origTimeUuid = cassandra.types.TimeUuid.now();
+
+  it('create tutple and timeuuid', function(done) {
+    CASS_TUPLE_TIME.create({
+      tuple: origTuple.values(),
+      time: origTimeUuid.toString(),
+      str: cassTestString,
+      num: cassTestNum,
+    }, function(err, m) {
+      verifyTheDefaultRows(err, m);
+      var mTupleArray = m.tuple.values();
+      mTupleArray.should.be.instanceof(Array);
+      mTupleArray.should.containDeep(origTupleArray);
+      origTupleArray.should.containDeep(mTupleArray);
+      savedTuple = m.tuple;
+      var mTimeString = m.time.toString();
+      mTimeString.should.be.instanceof(String);
+      m.time.should.eql(origTimeUuid);
+      savedTimeUuid = m.time;
+      ID_2 = m.id;
+      done();
+    });
+  });
+
+  it('find by id tuple and timeuuid', function(done) {
+    CASS_TUPLE_TIME.findById(savedTimeUuid, function(err, m) {
+      should.not.exist(err);
+      m.time.should.eql(savedTimeUuid);
+      m.tuple.should.eql(savedTuple);
+      done();
+    });
+  });
+
+  it('find by tuple and timeuuid', function(done) {
+    CASS_TUPLE_TIME.find(
+      {where: {time: savedTimeUuid}}, function(err, m) {
+      should.not.exist(err);
+      m[0].time.should.eql(savedTimeUuid);
+      m[0].tuple.should.eql(savedTuple);
+      done();
+    });
   });
 
 });
