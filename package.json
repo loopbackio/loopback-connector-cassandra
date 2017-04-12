@@ -9,6 +9,9 @@
     "DataSource",
     "Connector"
   ],
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "main": "index.js",
   "scripts": {
     "pretest": "node test/setupDb.js",
@@ -19,7 +22,6 @@
     "cassandra-driver": "^3.2.0",
     "debug": "^2.2.0",
     "loopback-connector": "^4.0.0",
-    "should": "^11.2.0",
     "strong-globalize": "^2.8.2"
   },
   "devDependencies": {
@@ -27,7 +29,7 @@
     "loopback-datasource-juggler": "^3.4.1",
     "mocha": "^2.2.5",
     "rc": "^1.1.0",
-    "should": "^7.0.3",
+    "should": "^11.2.1",
     "sinon": "^1.15.4",
     "uuid": "^3.0.1"
   },
