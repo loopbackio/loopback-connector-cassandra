@@ -35,6 +35,7 @@ global.connectorCapabilities = {
   supportUpdateWithoutId: false,
   supportInclude: false,
   supportGeoPoint: false,
+  nullDataValueExists: false
 };
 
 global.sinon = require('sinon');
