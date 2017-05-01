@@ -31,11 +31,11 @@ global.connectorCapabilities = {
   ignoreUndefinedConditionValue: false,
   supportStrictDelete: false,
   supportPagination: false,
-  supportNonPrimaryKeyIN: false,
   supportUpdateWithoutId: false,
   supportInclude: false,
   supportGeoPoint: false,
-  nullDataValueExists: false
+  nullDataValueExists: false,
+  supportTwoOrMoreInq: false,
 };
 
 global.sinon = require('sinon');
