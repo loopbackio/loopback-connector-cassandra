@@ -1,0 +1,8 @@
+{
+  "2c32dc4500f2315450505c8a7039d528": "{{Cassandra}} {{regex}} syntax does not respect the {{`i`}} flag",
+  "31822fc79a4244dc35bc2ec8b7d19002": "Warning: unsupported filters: {0}",
+  "3e80d9f78fc702c4fd433ebf67573c2f": "Not implemented by the {{Cassandra}} connector",
+  "45fe89e3a71f43b9bffcbca82c75012c": "{{Cassandra}} {{regex}} syntax does not respect the {{`g`}} flag",
+  "57512a471969647e8eaa2509cc292018": "{{callback}} should be a function",
+  "8a8027a7e5f410af28805c29555648f8": "{{Cassandra}} {{regex}} syntax does not respect the {{`m`}} flag"
+}
