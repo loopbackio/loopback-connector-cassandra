@@ -1,0 +1,84 @@
+{
+  "2c32dc4500f2315450505c8a7039d528": [
+    "g.warn:lib/cassandra.js:767"
+  ],
+  "31822fc79a4244dc35bc2ec8b7d19002": [
+    "g.f:lib/cassandra.js:242"
+  ],
+  "3e80d9f78fc702c4fd433ebf67573c2f": [
+    "g.f:lib/cassandra.js:788"
+  ],
+  "45fe89e3a71f43b9bffcbca82c75012c": [
+    "g.warn:lib/cassandra.js:770"
+  ],
+  "57512a471969647e8eaa2509cc292018": [
+    "g.f:lib/cassandra.js:195"
+  ],
+  "8a8027a7e5f410af28805c29555648f8": [
+    "g.warn:lib/cassandra.js:773"
+  ],
+  " FROM ": [
+    "ParameterizedSQL:lib/cassandra.js:226"
+  ],
+  " REGEXP ?": [
+    "ParameterizedSQL:lib/cassandra.js:775"
+  ],
+  "ALLOW FILTERING": [
+    "selectStmt.merge:lib/cassandra.js:245"
+  ],
+  "CQL: %s": [
+    "debug:lib/cassandra.js:323"
+  ],
+  "CQL: %s, params: %j": [
+    "debugQuery:lib/cassandra.js:198"
+  ],
+  "Data: ": [
+    "debugQuery:lib/cassandra.js:206"
+  ],
+  "Error: %j": [
+    "debugQuery:lib/cassandra.js:204"
+  ],
+  "INSERT INTO ": [
+    "ParameterizedSQL:lib/cassandra.js:311"
+  ],
+  "SELECT ": [
+    "ParameterizedSQL:lib/cassandra.js:224"
+  ],
+  "SELECT count(*) as \"cnt\" FROM ": [
+    "ParameterizedSQL:lib/cassandra.js:276"
+  ],
+  "TimeUuid generated %s": [
+    "debug:lib/cassandra.js:474"
+  ],
+  "Uuid generated %s": [
+    "debug:lib/cassandra.js:469"
+  ],
+  "disconnect": [
+    "debug:lib/cassandra.js:138"
+  ],
+  "generated": [
+    "prop.hasOwnProperty:lib/cassandra.js:301"
+  ],
+  "ADD ": [
+    "sql.push:lib/migration.js:165"
+  ],
+  "ALTER ": [
+    "sql.push:lib/migration.js:208",
+    "sql.push:lib/migration.js:211"
+  ],
+  "DROP ": [
+    "sql.push:lib/migration.js:274"
+  ],
+  "Default is not supported in Cassandra: ": [
+    "Error:lib/migration.js:428"
+  ],
+  "Model not found: ": [
+    "Error:lib/migration.js:58"
+  ],
+  "PRIMARY KEY(": [
+    "sql.push:lib/migration.js:351"
+  ],
+  "USE ": [
+    "self.execute:lib/migration.js:391"
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "lib/cassandra.js": {
+    "138": [
+      "debug('disconnect')"
+    ],
+    "195": [
+      "g.f('57512a471969647e8eaa2509cc292018')"
+    ],
+    "198": [
+      "debugQuery('CQL: %s, params: %j', ... )"
+    ],
+    "204": [
+      "debugQuery('Error: %j', ... )"
+    ],
+    "206": [
+      "debugQuery('Data: ')"
+    ],
+    "224": [
+      "ParameterizedSQL('SELECT ')"
+    ],
+    "226": [
+      "ParameterizedSQL(' FROM ')"
+    ],
+    "242": [
+      "g.f('31822fc79a4244dc35bc2ec8b7d19002')"
+    ],
+    "245": [
+      "selectStmt.merge('ALLOW FILTERING')"
+    ],
+    "276": [
+      "ParameterizedSQL('SELECT count(*) as \"cnt\" FROM ')"
+    ],
+    "301": [
+      "prop.hasOwnProperty('generated')"
+    ],
+    "311": [
+      "ParameterizedSQL('INSERT INTO ')"
+    ],
+    "323": [
+      "debug('CQL: %s', ... )"
+    ],
+    "469": [
+      "debug('Uuid generated %s', ... )"
+    ],
+    "474": [
+      "debug('TimeUuid generated %s', ... )"
+    ],
+    "767": [
+      "g.warn('2c32dc4500f2315450505c8a7039d528')"
+    ],
+    "770": [
+      "g.warn('45fe89e3a71f43b9bffcbca82c75012c')"
+    ],
+    "773": [
+      "g.warn('8a8027a7e5f410af28805c29555648f8')"
+    ],
+    "775": [
+      "ParameterizedSQL(' REGEXP ?')"
+    ],
+    "788": [
+      "g.f('3e80d9f78fc702c4fd433ebf67573c2f')"
+    ]
+  },
+  "lib/migration.js": {
+    "58": [
+      "Error('Model not found: ')"
+    ],
+    "165": [
+      "sql.push('ADD ')"
+    ],
+    "208": [
+      "sql.push('ALTER ')"
+    ],
+    "211": [
+      "sql.push('ALTER ')"
+    ],
+    "274": [
+      "sql.push('DROP ')"
+    ],
+    "351": [
+      "sql.push('PRIMARY KEY(')"
+    ],
+    "391": [
+      "self.execute('USE ')"
+    ],
+    "428": [
+      "Error('Default is not supported in Cassandra: ')"
+    ]
+  }
+}
