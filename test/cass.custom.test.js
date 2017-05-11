@@ -351,6 +351,90 @@ describe('cassandra custom tests', function() {
     });
   });
 
+  var targetTable = 'CASS_SORTABLE';
+
+  it('discoverPrimaryKeys', function(done) {
+    db.discoverPrimaryKeys(targetTable, {}, function(err, data) {
+      if (err) return done(err);
+      data.should.exist;
+      data.should.eql(['patNum','patBool','patStr','str','num']);
+      done();
+    });
+  });
+
+  it('discoverSchemas', function(done) {
+    db.discoverSchemas(targetTable, {}, function(err, data) {
+      if (err) return done(err);
+      var tableName = 'test.' + targetTable;
+      var existingTableNames = Object.keys(data);
+      existingTableNames.should.lengthOf(1);
+      existingTableNames[0].should.eql(tableName);
+      done();
+    });
+  });
+
+  it('discoverSchema', function(done) {
+    db.discoverSchema(targetTable, {}, function(err, data) {
+      if (err) return done(err);
+      data.properties.should.exist;
+      var targetPropertyNames = ['num', 'patbool', 'patnum', 'patstr', 'str', 'yearmonth'];
+      Object.keys(data.properties).should.eql(targetPropertyNames);
+      done();
+    });
+  });
+
+  it('discoverForeignKeys', function(done) {
+    (function() {
+      db.discoverForeignKeys(targetTable, {}, function(err, data) {
+      });
+    }).should.throw('self.buildQueryForeignKeys is not a function');
+    done();
+  });
+
+  it('discoverExportedForeignKeys', function(done) {
+    (function() {
+      db.discoverExportedForeignKeys(targetTable, {}, function(err, data) {
+      });
+    }).should.throw('self.buildQueryExportedForeignKeys is not a function');
+    done();
+  });
+
+  it('discoverAndBuildModels', function(done) {
+    db.discoverAndBuildModels(targetTable, {}, function(err, data) {
+      if (err) return done(err);
+      // console.log('============== discoverAndBuildModels:', err, data);
+      done();
+    });
+  });
+
+  it('discoverModelDefinitions', function(done) {
+    db.discoverModelDefinitions({}, function(err, data) {
+      if (err) return done(err);
+      var columnFamilyName = 'test';
+      var tableNamesInTheColuymnFamily = [];
+      data.forEach(function(row) {
+        if (row.owner === columnFamilyName) {
+          tableNamesInTheColuymnFamily.push(row.name);
+        }
+      })
+      targetTable.should.oneOf(tableNamesInTheColuymnFamily);
+      done(err);
+    });
+  });
+
+  it('discoverModelProperties', function(done) {
+    var targetColumnNames = ['num', 'patBool', 'patNum', 'patStr', 'str', 'yearMonth'];
+    db.discoverModelProperties(targetTable, {}, function(err, data) {
+      if (err) return done(err);
+      data.forEach(function(row, ix) {
+        row.owner.should.eql('test');
+        row.name.should.eql(targetTable);
+        row.columnName.should.eql(targetColumnNames[ix]);
+      })
+      done();
+    });
+  });
+
 });
 
 var allInfo, members, teams; // models
