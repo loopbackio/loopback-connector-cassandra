@@ -1,4 +1,18 @@
-2017-04-27, Version 1.0.2
+2017-05-15, Version 1.1.0
+=========================
+
+ * Upgrade deps (Tetsuo Seto)
+
+ * Improve debugging levels (Raymond Feng)
+
+ * Support include using secondary index (Tetsuo Seto)
+
+ * Remove intl/zz (Tetsuo Seto)
+
+ * Extract messages for translation (Tetsuo Seto)
+
+
+2017-04-26, Version 1.0.2
 =========================
 
  * Disambiguate and make examples really correct (Tetsuo Seto)
