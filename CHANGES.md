@@ -1,3 +1,9 @@
+2017-05-16, Version 1.1.1
+=========================
+
+ * Add sample code to use materialized view (Tetsuo Seto)
+
+
 2017-05-15, Version 1.1.0
 =========================
 
