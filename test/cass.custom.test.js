@@ -357,9 +357,9 @@ var allInfo, members, teams; // models
 
 var viewSchemas = {
   members: {
-    member: {type: String, id: true},
-    team: String, // clustering key: 1
-    registered: Boolean, // clustering key: 2
+    member: String, // clustering key: 2
+    team: {type: String, id: true},
+    registered: Boolean, // clustering key: 1
     zipCode: Number,
     },
   teams: {
@@ -383,6 +383,30 @@ var teamsData = [ // team, league, member
   ['Red', 'South', ''],
   ['Yellow', 'South', ''],
 ];
+
+var knownBlueTeamMembers = [{
+  member: 'Mary',
+  team: 'Blue', 
+  registered: false,
+  zipCode: 98003,
+}, {
+  member: 'Bob',
+  team: 'Blue', 
+  registered: true,
+  zipCode: 98004,
+}];
+
+var knownUnregisteredMembers = [{
+  member: 'Mary',
+  team: 'Blue', 
+  registered: false,
+  zipCode: 98003,
+}, {
+  member: 'Peter',
+  team: 'Yellow', 
+  registered: false,
+  zipCode: 98005,
+}];
 
 function createModelFromViewSchema(viewName) {
   var viewNames = Object.keys(viewSchemas);
@@ -425,7 +449,7 @@ describe('materialized views', function() {
       'SELECT member, team, registered, "zipCode" FROM "allInfo" ' +
       'WHERE member IS NOT NULL AND team IS NOT NULL AND ' +
       '"zipCode" IS NOT NULL AND registered IS NOT NULL ' +
-      'PRIMARY KEY (member, team, registered)', done);
+      'PRIMARY KEY (team, registered, member)', done);
   });
 
   it('create materialized view - teams', function(done) {
@@ -471,25 +495,25 @@ describe('materialized views', function() {
     });
   });
 
-  var knownBlueMembers = [{
-    member: 'Mary',
-    team: 'Blue', 
-    registered: false,
-    zipCode: 98003,
-  }, {
-    member: 'Bob',
-    team: 'Blue', 
-    registered: true,
-    zipCode: 98004,
-  }];
-
   it('find members from team', function(done) {
     members.find(
       {where: {team: 'Blue'}}, function(err, rows) {
         if (err) return done(err);
         rows.should.have.length(2);
         rows.forEach(function(row) {
-          row.__data.should.be.oneOf(knownBlueMembers);          
+          row.__data.should.be.oneOf(knownBlueTeamMembers);          
+        });
+        done();
+      });
+  });
+
+  it('find members from registration status', function(done) {
+    members.find(
+      {where: {registered: false}}, function(err, rows) {
+        if (err) return done(err);
+        rows.should.have.length(2);
+        rows.forEach(function(row) {
+          row.__data.should.be.oneOf(knownUnregisteredMembers);          
         });
         done();
       });
@@ -500,7 +524,7 @@ describe('materialized views', function() {
       {where: {and: [{team: 'Blue'}, {registered: true}]}}, function(err, rows) {
         if (err) return done(err);
         rows.should.have.length(1);
-        rows[0].__data.should.be.eql(knownBlueMembers[1]);          
+        rows[0].__data.should.be.eql(knownBlueTeamMembers[1]);          
         done();
       });
   });
