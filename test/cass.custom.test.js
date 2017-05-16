@@ -352,3 +352,180 @@ describe('cassandra custom tests', function() {
   });
 
 });
+
+var allInfo, members, teams; // models
+
+var viewSchemas = {
+  members: {
+    member: {type: String, id: true},
+    team: String, // clustering key: 1
+    registered: Boolean, // clustering key: 2
+    zipCode: Number,
+    },
+  teams: {
+    league: {type: String, id: true},
+    team: String, // clustering key: 1
+    member: String, // unused but required because it's a primary key of the base table
+    },
+}
+
+var membersData = [ // registered, member, zipCode, team
+  [true, 'John', 98001, 'Green'],
+  [true, 'Kate', 98002, 'Red'],
+  [false, 'Mary', 98003, 'Blue'],
+  [true, 'Bob', 98004, 'Blue'],
+  [false, 'Peter', 98005, 'Yellow'],
+];
+
+var teamsData = [ // team, league, member
+  ['Blue', 'North', ''],
+  ['Green', 'North', ''],
+  ['Red', 'South', ''],
+  ['Yellow', 'South', ''],
+];
+
+function createModelFromViewSchema(viewName) {
+  var viewNames = Object.keys(viewSchemas);
+  if (viewNames.indexOf(viewName) < 0) {
+    return null;
+  }
+  db.createModel(viewName, viewSchemas[viewName]);
+  var model = db.getModel(viewName);
+  return model;
+}
+
+describe('materialized views', function() {
+  before(function(done) {
+    db = getSchema();
+    allInfo = db.define('allInfo', {
+      team: {type: String, id: 1},
+      league: String,
+      member: {type: String, id: 2},
+      zipCode: Number,
+      registered: Boolean,
+      });
+    db.connector.execute('DROP MATERIALIZED VIEW IF EXISTS members', function(err){
+      if (err) return done(err);
+      db.connector.execute('DROP MATERIALIZED VIEW IF EXISTS teams', function(err){
+        if (err) return done(err);
+        db.automigrate(['allInfo'], function(err) {
+          if (err) return done(err);
+          members = createModelFromViewSchema('members');
+          members.should.exist;
+          teams = createModelFromViewSchema('teams');
+          teams.should.exist;
+          done();
+        });
+      });
+    });
+  });
+
+  it('create materialized view - members', function(done) {
+    db.connector.execute('CREATE MATERIALIZED VIEW members AS ' +
+      'SELECT member, team, registered, "zipCode" FROM "allInfo" ' +
+      'WHERE member IS NOT NULL AND team IS NOT NULL AND ' +
+      '"zipCode" IS NOT NULL AND registered IS NOT NULL ' +
+      'PRIMARY KEY (member, team, registered)', done);
+  });
+
+  it('create materialized view - teams', function(done) {
+    db.connector.execute('CREATE MATERIALIZED VIEW teams AS ' +
+      'SELECT team, league FROM "allInfo" ' +
+      'WHERE league IS NOT NULL AND team IS NOT NULL AND member IS NOT NULL ' +
+      'PRIMARY KEY (league, team, member)', done);
+  });
+
+  it('populate members test data', function(done) {
+    var doneIsCalled = false;
+    membersData.forEach(function(member, ix) {
+      allInfo.create({
+        registered: member[0],
+        member: member[1],
+        zipCode: member[2],
+        team: member[3],
+      }, function(err, result) {
+        if (err) return done(err);
+        result.registered.should.be.eql(membersData[ix][0]);
+        result.member.should.be.eql(membersData[ix][1]);
+        result.zipCode.should.be.eql(membersData[ix][2]);
+        result.team.should.be.eql(membersData[ix][3]);
+        if (ix === membersData.length - 1) done(err);
+      });
+    });
+  });
+
+  it('populate teams test data', function(done) {
+    var doneIsCalled = false;
+    teamsData.forEach(function(team, ix) {
+      allInfo.create({
+        team: team[0],
+        league: team[1],
+        member: team[2],
+      }, function(err, result) {
+        if (err) return done(err);
+        result.team.should.be.eql(teamsData[ix][0]);
+        result.league.should.be.eql(teamsData[ix][1]);
+        result.member.should.be.eql(teamsData[ix][2]);
+        if (ix === teamsData.length - 1) done(err);
+      });
+    });
+  });
+
+  var knownBlueMembers = [{
+    member: 'Mary',
+    team: 'Blue', 
+    registered: false,
+    zipCode: 98003,
+  }, {
+    member: 'Bob',
+    team: 'Blue', 
+    registered: true,
+    zipCode: 98004,
+  }];
+
+  it('find members from team', function(done) {
+    members.find(
+      {where: {team: 'Blue'}}, function(err, rows) {
+        if (err) return done(err);
+        rows.should.have.length(2);
+        rows.forEach(function(row) {
+          row.__data.should.be.oneOf(knownBlueMembers);          
+        });
+        done();
+      });
+  });
+
+  it('find members from team and registration status', function(done) {
+    members.find(
+      {where: {and: [{team: 'Blue'}, {registered: true}]}}, function(err, rows) {
+        if (err) return done(err);
+        rows.should.have.length(1);
+        rows[0].__data.should.be.eql(knownBlueMembers[1]);          
+        done();
+      });
+  });
+
+  it('find team from league', function(done) {
+    teams.find(
+      {where: {league: 'North'}}, function(err, rows) {
+        if (err) return done(err);
+        rows.should.have.length(2);
+        rows.forEach(function(row) {
+          row.__data.league.should.eql('North');
+          row.__data.team.should.be.oneOf(['Blue', 'Green']);          
+        });
+        done();
+      });
+  });
+
+  it('find league from team', function(done) {
+    teams.find(
+      {where: {team: 'Green'}}, function(err, rows) {
+        if (err) return done(err);
+        rows.should.have.length(1);
+        rows[0].__data.league.should.be.eql('North');          
+        done();
+      });
+  });
+
+});
