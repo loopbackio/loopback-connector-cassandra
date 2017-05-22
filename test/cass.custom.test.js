@@ -531,11 +531,12 @@ describe('materialized views', function() {
 
   it('find team from league', function(done) {
     teams.find(
-      {where: {league: 'North'}}, function(err, rows) {
+      {where: {league: 'North'}, fields: ['league', 'team']}, function(err, rows) {
         if (err) return done(err);
         rows.should.have.length(2);
         rows.forEach(function(row) {
-          row.__data.league.should.eql('North');
+          row.__data.should.not.have.property('member');
+          row.__data.should.have.property('league', 'North');
           row.__data.team.should.be.oneOf(['Blue', 'Green']);          
         });
         done();
@@ -544,10 +545,12 @@ describe('materialized views', function() {
 
   it('find league from team', function(done) {
     teams.find(
-      {where: {team: 'Green'}}, function(err, rows) {
+      {where: {team: 'Green'}, fields: {member: false}}, function(err, rows) {
         if (err) return done(err);
         rows.should.have.length(1);
-        rows[0].__data.league.should.be.eql('North');          
+        rows[0].__data.should.not.have.property('member');
+        rows[0].__data.should.have.property('league', 'North');          
+        rows[0].__data.should.have.property('team', 'Green');          
         done();
       });
   });
