@@ -1,0 +1,9 @@
+{
+  "2c32dc4500f2315450505c8a7039d528": "La syntaxe {{Cassandra}} {{regex}} ne respecte pas l'indicateur {{`i`}}",
+  "31822fc79a4244dc35bc2ec8b7d19002": "Avertissement : filtres non pris en charge : {0}",
+  "3e80d9f78fc702c4fd433ebf67573c2f": "Non implémenté par le connecteur {{Cassandra}}",
+  "45fe89e3a71f43b9bffcbca82c75012c": "La syntaxe {{Cassandra}} {{regex}} ne respecte pas l'indicateur {{`g`}}",
+  "57512a471969647e8eaa2509cc292018": "{{callback}} doit être une fonction",
+  "8a8027a7e5f410af28805c29555648f8": "La syntaxe {{Cassandra}} {{regex}} ne respecte pas l'indicateur {{`m`}}"
+}
+
