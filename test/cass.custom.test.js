@@ -460,7 +460,7 @@ describe('materialized views', function() {
   });
 
   it('populate members test data', function(done) {
-    var doneIsCalled = false;
+    var nVerified = 0;
     membersData.forEach(function(member, ix) {
       allInfo.create({
         registered: member[0],
@@ -473,13 +473,13 @@ describe('materialized views', function() {
         result.member.should.be.eql(membersData[ix][1]);
         result.zipCode.should.be.eql(membersData[ix][2]);
         result.team.should.be.eql(membersData[ix][3]);
-        if (ix === membersData.length - 1) done(err);
+        if (++nVerified === membersData.length) done();
       });
     });
   });
 
   it('populate teams test data', function(done) {
-    var doneIsCalled = false;
+    var nVerified = 0;
     teamsData.forEach(function(team, ix) {
       allInfo.create({
         team: team[0],
@@ -490,7 +490,7 @@ describe('materialized views', function() {
         result.team.should.be.eql(teamsData[ix][0]);
         result.league.should.be.eql(teamsData[ix][1]);
         result.member.should.be.eql(teamsData[ix][2]);
-        if (ix === teamsData.length - 1) done(err);
+        if (++nVerified === teamsData.length) done();
       });
     });
   });
