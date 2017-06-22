@@ -1,3 +1,23 @@
+2017-06-22, Version 1.2.0
+=========================
+
+ * Initial discovery implementation (Tetsuo Seto)
+
+ * Updated Italian translation strings Q2 2017 (Allen Boone)
+
+ * Fix early bail out (Tetsuo Seto)
+
+ * Add SG require (Tetsuo Seto)
+
+ * Add docker setup (ssh24)
+
+ * Update translated strings Q2 2017 (Allen Boone)
+
+ * Improve test by adding fields filter (Tetsuo Seto)
+
+ * Improve materialized view schema (Tetsuo Seto)
+
+
 2017-05-16, Version 1.1.1
 =========================
 
