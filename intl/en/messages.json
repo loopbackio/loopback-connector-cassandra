@@ -4,5 +4,7 @@
   "3e80d9f78fc702c4fd433ebf67573c2f": "Not implemented by the {{Cassandra}} connector",
   "45fe89e3a71f43b9bffcbca82c75012c": "{{Cassandra}} {{regex}} syntax does not respect the {{`g`}} flag",
   "57512a471969647e8eaa2509cc292018": "{{callback}} should be a function",
-  "8a8027a7e5f410af28805c29555648f8": "{{Cassandra}} {{regex}} syntax does not respect the {{`m`}} flag"
+  "6ce5c3a3d305e965ff06e2b3e16e1252": "{{options}} must be an {{object}}: {0}",
+  "8a8027a7e5f410af28805c29555648f8": "{{Cassandra}} {{regex}} syntax does not respect the {{`m`}} flag",
+  "a0078d732b2dbabf98ed2efcdb55b402": "{{table}} is a required string argument: {0}"
 }
