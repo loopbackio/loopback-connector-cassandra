@@ -4,6 +4,8 @@
   "3e80d9f78fc702c4fd433ebf67573c2f": "Nicht vom {{Cassandra}}-Konnektor implementiert",
   "45fe89e3a71f43b9bffcbca82c75012c": "{{Cassandra}} {{regex}}-Syntax berücksichtigt nicht das {{`g`}}-Flag",
   "57512a471969647e8eaa2509cc292018": "{{callback}} sollte eine Funktion sein",
-  "8a8027a7e5f410af28805c29555648f8": "{{Cassandra}} {{regex}}-Syntax berücksichtigt nicht das {{`m`}}-Flag"
+  "6ce5c3a3d305e965ff06e2b3e16e1252": "{{options}} muss ein {{object}} sein: {0}",
+  "8a8027a7e5f410af28805c29555648f8": "{{Cassandra}} {{regex}}-Syntax berücksichtigt nicht das {{`m`}}-Flag",
+  "a0078d732b2dbabf98ed2efcdb55b402": "{{table}} ist ein erforderliches Zeichenfolgeargument: {0}"
 }
 

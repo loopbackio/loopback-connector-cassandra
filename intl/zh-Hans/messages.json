@@ -4,6 +4,8 @@
   "3e80d9f78fc702c4fd433ebf67573c2f": "未经 {{Cassandra}} 连接器实施",
   "45fe89e3a71f43b9bffcbca82c75012c": "{{Cassandra}} {{regex}} 语法不考虑 {{`g`}} 标志",
   "57512a471969647e8eaa2509cc292018": "{{callback}} 应该是函数",
-  "8a8027a7e5f410af28805c29555648f8": "{{Cassandra}} {{regex}} 语法不考虑 {{`m`}} 标志"
+  "6ce5c3a3d305e965ff06e2b3e16e1252": "{{options}} 必须为 {{object}}：{0}",
+  "8a8027a7e5f410af28805c29555648f8": "{{Cassandra}} {{regex}} 语法不考虑 {{`m`}} 标志",
+  "a0078d732b2dbabf98ed2efcdb55b402": "{{table}} 是必需的字符串自变量：{0}"
 }
 
