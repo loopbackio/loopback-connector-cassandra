@@ -4,6 +4,8 @@
   "3e80d9f78fc702c4fd433ebf67573c2f": "{{Cassandra}} 連接器未實作",
   "45fe89e3a71f43b9bffcbca82c75012c": "{{Cassandra}} {{regex}} 語法未遵循 {{`g`}} 旗標",
   "57512a471969647e8eaa2509cc292018": "{{callback}} 應該是函數",
-  "8a8027a7e5f410af28805c29555648f8": "{{Cassandra}} {{regex}} 語法未遵循 {{`m`}} 旗標"
+  "6ce5c3a3d305e965ff06e2b3e16e1252": "{{options}} 必須是 {{object}}：{0}",
+  "8a8027a7e5f410af28805c29555648f8": "{{Cassandra}} {{regex}} 語法未遵循 {{`m`}} 旗標",
+  "a0078d732b2dbabf98ed2efcdb55b402": "{{table}} 是必要的字串引數：{0}"
 }
 

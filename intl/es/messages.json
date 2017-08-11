@@ -4,6 +4,8 @@
   "3e80d9f78fc702c4fd433ebf67573c2f": "No implementado por el conector {{Cassandra}}",
   "45fe89e3a71f43b9bffcbca82c75012c": "La sintaxis de {{Cassandra}} {{regex}} no respeta el distintivo {{`g`}}",
   "57512a471969647e8eaa2509cc292018": "{{callback}} debe ser una función",
-  "8a8027a7e5f410af28805c29555648f8": "La sintaxis de {{Cassandra}} {{regex}} no respeta el distintivo {{`m`}}"
+  "6ce5c3a3d305e965ff06e2b3e16e1252": "{{options}} debe ser un {{object}}: {0}",
+  "8a8027a7e5f410af28805c29555648f8": "La sintaxis de {{Cassandra}} {{regex}} no respeta el distintivo {{`m`}}",
+  "a0078d732b2dbabf98ed2efcdb55b402": "{{table}} es un argumento de serie obligatorio: {0}"
 }
 
