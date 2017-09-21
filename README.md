@@ -66,6 +66,21 @@ The entry in the application's `/server/datasources.json` will look like this:
   "connector": "cassandra"
 }
 ```
+For passing array of cluster nodes as contact points edit `datasources.json` as below:
+```javascript
+"mycass": {
+  "host": "localhost",
+  "contactPoints": ["cluster1","cluster2"],
+  "port": 9042,
+  "database": "test",
+  "password": "",
+  "name": "mycass",
+  "user": "",
+  "connectTimeout": 30000,
+  "readTimeout": 30000,
+  "connector": "cassandra"
+}
+```
 
 Edit `datasources.json` to add any other additional properties supported by [`cassandra-driver`](https://github.com/datastax/nodejs-driver).
 
@@ -340,11 +355,12 @@ Pagination is not supported in V1.
 If you have a local or remote Cassandra instance and would like to use that to run the test suite, use the following command:
 - Linux
 ```bash
-CASSANDRA_HOST=<HOST> CASSANDRA_PORT=<PORT> CASSANDRA_KEYSPACE=<KEYSPACE> CI=true npm test
+CASSANDRA_HOST=<HOST> CASSANDRA_CONTACT_POINTS=<CONTACT_POINTS> CASSANDRA_PORT=<PORT> CASSANDRA_KEYSPACE=<KEYSPACE> CI=true npm test
 ```
 - Windows
 ```bash
 SET CASSANDRA_HOST=<HOST>
+SET CASSANDRA_CONTACT_POINTS=<CONTACT_POINTS>
 SET CASSANDRA_PORT=<PORT>
 SET CASSANDRA_KEYSPACE=<KEYSPACE>
 SET CI=true
