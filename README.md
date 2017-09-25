@@ -13,24 +13,24 @@ In your application root directory, enter this command to install the connector:
 npm install loopback-connector-cassandra --save
 ```
 
-This installs the module from npm and adds it as a dependency to the application's `package.json` file.
+This installs the module from npm and adds it as a dependency to the application's `package.json` file.
 
 If you create a Cassandra data source using the data source generator as described below, you don't have to do this, since the generator will run `npm install` for you.
 
 ## Creating a Cassandra data source
 
-Use the [Data source generator](http://loopback.io/doc/en/lb3/Data-source-generator.html) to add a Cassandra data source to your application.  Select `Cassandra` connector as follows:
+Use the [Data source generator](http://loopback.io/doc/en/lb3/Data-source-generator.html) to add a Cassandra data source to your application.  Select `Cassandra` connector as follows:
 ```
 $ lb datasource
 ? Enter the data-source name: mycass
-? Select the connector for mycass: 
-  IBM Cloudant DB (supported by StrongLoop) 
-  IBM DB2 for z/OS (supported by StrongLoop) 
-  IBM WebSphere eXtreme Scale key-value connector (supported by StrongLoop) 
-❯ Cassandra (supported by StrongLoop) 
-  Redis key-value connector (supported by StrongLoop) 
-  MongoDB (supported by StrongLoop) 
-  MySQL (supported by StrongLoop) 
+? Select the connector for mycass:
+  IBM Cloudant DB (supported by StrongLoop)
+  IBM DB2 for z/OS (supported by StrongLoop)
+  IBM WebSphere eXtreme Scale key-value connector (supported by StrongLoop)
+❯ Cassandra (supported by StrongLoop)
+  Redis key-value connector (supported by StrongLoop)
+  MongoDB (supported by StrongLoop)
+  MySQL (supported by StrongLoop)
 (Move up and down to reveal more choices)
 ```
 The generator will then prompt for the database server hostname, port, and other settings
@@ -42,8 +42,8 @@ $ lb datasource
 Connector-specific configuration:
 ? host: localhost
 ? port: 9042
-? user: 
-? password: 
+? user:
+? password:
 ? database: test
 ? connectTimeout(ms): 30000
 ? readTimeout(ms): 30000
@@ -66,12 +66,27 @@ The entry in the application's `/server/datasources.json` will look like this:
   "connector": "cassandra"
 }
 ```
+For passing array of cluster nodes as contact points edit `datasources.json` as below:
+```javascript
+"mycass": {
+  "host": "localhost",
+  "contactPoints": ["cluster1","cluster2"],
+  "port": 9042,
+  "database": "test",
+  "password": "",
+  "name": "mycass",
+  "user": "",
+  "connectTimeout": 30000,
+  "readTimeout": 30000,
+  "connector": "cassandra"
+}
+```
 
 Edit `datasources.json` to add any other additional properties supported by [`cassandra-driver`](https://github.com/datastax/nodejs-driver).
 
 ## Type mappings
 
-See [LoopBack types](http://loopback.io/doc/en/lb3/LoopBack-types.html) for details on LoopBack's data types.
+See [LoopBack types](http://loopback.io/doc/en/lb3/LoopBack-types.html) for details on LoopBack's data types.
 
 ### LoopBack to/from Cassandra types
 
@@ -84,7 +99,7 @@ In addition to the standard data types such as String, Boolean, and Number, seve
       <th>Cassandra Type</th>
     </tr>
   </thead>
-  <tbody>    
+  <tbody>
     <tr>
       <td>Uuid</td>
       <td>UUID</td>
@@ -206,7 +221,7 @@ Note that `clusteringKeys` is defined as an array because the order of the sorti
       <th>userId</th>
     </tr>
   </thead>
-  <tbody>    
+  <tbody>
     <tr>
       <td>true</td>
       <td>Arizona</td>
@@ -340,11 +355,12 @@ Pagination is not supported in V1.
 If you have a local or remote Cassandra instance and would like to use that to run the test suite, use the following command:
 - Linux
 ```bash
-CASSANDRA_HOST=<HOST> CASSANDRA_PORT=<PORT> CASSANDRA_KEYSPACE=<KEYSPACE> CI=true npm test
+CASSANDRA_HOST=<HOST> CASSANDRA_CONTACT_POINTS=<CONTACT_POINTS> CASSANDRA_PORT=<PORT> CASSANDRA_KEYSPACE=<KEYSPACE> CI=true npm test
 ```
 - Windows
 ```bash
 SET CASSANDRA_HOST=<HOST>
+SET CASSANDRA_CONTACT_POINTS=<CONTACT_POINTS>
 SET CASSANDRA_PORT=<PORT>
 SET CASSANDRA_KEYSPACE=<KEYSPACE>
 SET CI=true
