@@ -1,3 +1,19 @@
+2017-12-14, Version 1.3.0
+=========================
+
+ * add support for sslOptions (Alex de Mulder)
+
+ * Add stalebot configuration (Kevin Delisle)
+
+ * Create Issue and PR Templates (#46) (Sakib Hasan)
+
+ * Update translated strings Q3 2017 (Allen Boone)
+
+ * update messages.json (Diana Lau)
+
+ * Add CODEOWNER file (Diana Lau)
+
+
 2017-06-22, Version 1.2.0
 =========================
 
