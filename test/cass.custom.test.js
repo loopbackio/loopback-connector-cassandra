@@ -8,7 +8,9 @@
 
 /* global getSchema:false */
 
+var DataSource = require('loopback-datasource-juggler').DataSource;
 var cassandra = require('cassandra-driver');
+var cassConnector = require('../lib/cassandra');
 var should = require('should');
 
 var db, CASS, CASS_SORTABLE, CASS_TUPLE_TIME;
@@ -52,8 +54,8 @@ describe('cassandra custom tests', function() {
     m.str.should.be.type('string');
     m.str.indexOf(cassTestString).should.be.aboveOrEqual(0);
     m.num.should.be.type('number');
-    m.num.should.be.aboveOrEqual(cassTestNum);    
- }
+    m.num.should.be.aboveOrEqual(cassTestNum);
+  }
 
   function verifyExtraRows(err, m) {
     should.not.exists(err);
@@ -68,6 +70,57 @@ describe('cassandra custom tests', function() {
     m.patStr.should.equal(cassTestString + '100');
  }
 
+  describe('create keyspace if it does not exist', function () {
+    it('create keysapce with no specified replication', function (done) {
+      var config = require('rc')('loopback', {
+        test: {
+          cassandra: {
+            host: process.env.CASSANDRA_HOST || 'localhost',
+            port: process.env.CASSANDRA_PORT || 9042,
+            keyspace: 'test0_' + Date.now(),
+            createKeyspace: true,
+          }
+        }
+      }).test.cassandra;
+
+      var ds = new DataSource(require('../'), config);
+
+      cassConnector.initialize(ds, function () {
+        ds.connector.client.execute('SELECT replication FROM system_schema.keyspaces WHERE keyspace_name=\'' + config.keyspace + '\'', function (err, rows) {
+          rows.rows[0].replication.class.should.eql('org.apache.cassandra.locator.SimpleStrategy');
+          rows.rows[0].replication.replication_factor.should.eql('3');
+          done();
+        });
+      });
+    });
+
+    it('create keysapce with specified replication', function (done) {
+      var config = require('rc')('loopback', {
+        test: {
+          cassandra: {
+            host: process.env.CASSANDRA_HOST || 'localhost',
+            port: process.env.CASSANDRA_PORT || 9042,
+            keyspace: 'test1_' + Date.now(),
+            createKeyspace: true,
+            replication: {
+              class: 'NetworkTopologyStrategy', 
+              dc1: 1,
+            }
+          }
+        }
+      }).test.cassandra;
+
+      var ds = new DataSource(require('../'), config);
+
+      cassConnector.initialize(ds, function () {
+        ds.connector.client.execute('SELECT replication FROM system_schema.keyspaces WHERE keyspace_name=\'' + config.keyspace + '\'', function (err, rows) {
+          rows.rows[0].replication.class.should.eql('org.apache.cassandra.locator.NetworkTopologyStrategy');
+          rows.rows[0].replication.dc1.should.eql('1');
+          done();
+        });
+      });
+    });
+  });
 
   // http://apidocs.strongloop.com/loopback/#persistedmodel-create
   it('create', function(done) {
@@ -470,24 +523,24 @@ var teamsData = [ // team, league, member
 
 var knownBlueTeamMembers = [{
   member: 'Mary',
-  team: 'Blue', 
+  team: 'Blue',
   registered: false,
   zipCode: 98003,
 }, {
   member: 'Bob',
-  team: 'Blue', 
+  team: 'Blue',
   registered: true,
   zipCode: 98004,
 }];
 
 var knownUnregisteredMembers = [{
   member: 'Mary',
-  team: 'Blue', 
+  team: 'Blue',
   registered: false,
   zipCode: 98003,
 }, {
   member: 'Peter',
-  team: 'Yellow', 
+  team: 'Yellow',
   registered: false,
   zipCode: 98005,
 }];
@@ -585,7 +638,7 @@ describe('materialized views', function() {
         if (err) return done(err);
         rows.should.have.length(2);
         rows.forEach(function(row) {
-          row.__data.should.be.oneOf(knownBlueTeamMembers);          
+          row.__data.should.be.oneOf(knownBlueTeamMembers);
         });
         done();
       });
@@ -597,7 +650,7 @@ describe('materialized views', function() {
         if (err) return done(err);
         rows.should.have.length(2);
         rows.forEach(function(row) {
-          row.__data.should.be.oneOf(knownUnregisteredMembers);          
+          row.__data.should.be.oneOf(knownUnregisteredMembers);
         });
         done();
       });
@@ -608,7 +661,7 @@ describe('materialized views', function() {
       {where: {and: [{team: 'Blue'}, {registered: true}]}}, function(err, rows) {
         if (err) return done(err);
         rows.should.have.length(1);
-        rows[0].__data.should.be.eql(knownBlueTeamMembers[1]);          
+        rows[0].__data.should.be.eql(knownBlueTeamMembers[1]);
         done();
       });
   });
@@ -621,7 +674,7 @@ describe('materialized views', function() {
         rows.forEach(function(row) {
           row.__data.should.not.have.property('member');
           row.__data.should.have.property('league', 'North');
-          row.__data.team.should.be.oneOf(['Blue', 'Green']);          
+          row.__data.team.should.be.oneOf(['Blue', 'Green']);
         });
         done();
       });
@@ -633,10 +686,9 @@ describe('materialized views', function() {
         if (err) return done(err);
         rows.should.have.length(1);
         rows[0].__data.should.not.have.property('member');
-        rows[0].__data.should.have.property('league', 'North');          
-        rows[0].__data.should.have.property('team', 'Green');          
+        rows[0].__data.should.have.property('league', 'North');
+        rows[0].__data.should.have.property('team', 'Green');
         done();
       });
   });
-
 });
