@@ -8,7 +8,11 @@ var DataSource = require('loopback-datasource-juggler').DataSource;
 var config = require('rc')('loopback', {test: {cassandra: {
   host: process.env.CASSANDRA_HOST || 'localhost',
   port: process.env.CASSANDRA_PORT || 9042,
-  keyspace: process.env.CASSANDRA_KEYSPACE || 'test'
+  keyspace: process.env.CASSANDRA_KEYSPACE || 'test',
+  replication: process.env.CASSANDRA_REPLICATION || {
+    class: 'SimpleStrategy', 
+    replication_factor: 3,
+  }
 }}}).test.cassandra;
 
 global.getDataSource = global.getSchema = function() {

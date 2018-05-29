@@ -38,7 +38,7 @@ describe('cassandra custom tests', function() {
         },
       });
     CASS_TUPLE_TIME = db.define('CASS_TUPLE_TIME', {
-      tuple: {type: 'Tuple', componentTypes: ['TEXT', 'TEXT', 'TEXT', 'TEXT']},
+      tuple: {type: 'Tuple', componentTypes: [{type: 'Tuple', componentTypes: ['TEXT', 'TEXT']}, 'TEXT', 'TEXT', 'TEXT']},
       str: String,
       num: Number,
       time: {type: 'TimeUuid', id: true},
@@ -359,7 +359,7 @@ describe('cassandra custom tests', function() {
   });
 
   var ID_2, savedTuple, savedTimeUuid;
-  var origTupleArray = ['USA', 'California', 'San Francisco', 'Market St.'];
+  var origTupleArray = [cassandra.types.Tuple.fromArray(['USA', 'California']), 'San Francisco', 'Market', 'St.'];
   var origTuple = cassandra.types.Tuple.fromArray(origTupleArray);
   var origTimeUuid = cassandra.types.TimeUuid.now();
 
