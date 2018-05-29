@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "async": "^2.3.0",
-    "cassandra-driver": "^3.2.0",
+    "cassandra-driver": "3.5.0",
     "cassandra-map": "0.1.7",
     "debug": "^2.2.0",
     "loopback-connector": "^4.0.0",

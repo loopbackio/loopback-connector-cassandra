@@ -38,7 +38,7 @@ describe('cassandra custom tests', function() {
         },
       });
     CASS_TUPLE_TIME = db.define('CASS_TUPLE_TIME', {
-      tuple: {type: 'Tuple'},
+      tuple: {type: 'Tuple', componentTypes: ['TEXT', 'TEXT', 'TEXT', 'TEXT']},
       str: String,
       num: Number,
       time: {type: 'TimeUuid', id: true},
@@ -68,7 +68,7 @@ describe('cassandra custom tests', function() {
     m.patNum.should.equal(100);
     m.patStr.should.be.type('string');
     m.patStr.should.equal(cassTestString + '100');
- }
+  }
 
   describe('create keyspace if it does not exist', function () {
     it('create keysapce with no specified replication', function (done) {
