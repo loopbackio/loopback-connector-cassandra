@@ -70,14 +70,13 @@ describe('cassandra custom tests', function() {
     m.patStr.should.equal(cassTestString + '100');
   }
 
-  describe('create keyspace if it does not exist', function () {
+  describe.only('create keyspace if it does not exist', function () {
     function queryKeyspace(connector, dsConfig, cb) {
       var ds = new DataSource(require('../'), dsConfig);
 
       connector.initialize(ds, function () {
-        ds.connector.execute('SELECT replication FROM system_schema.keyspaces WHERE keyspace_name=\'' + dsConfig.keyspace + '\'', function (err, rows) {
-          cb(err, rows);
-        });
+        ds.connector.execute('SELECT replication FROM system_schema.keyspaces' +
+          ' WHERE keyspace_name=\'' + dsConfig.keyspace + '\'', cb);
       });
     }
 
