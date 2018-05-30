@@ -71,6 +71,16 @@ describe('cassandra custom tests', function() {
   }
 
   describe('create keyspace if it does not exist', function () {
+    function queryKeyspace(connector, dsConfig, cb) {
+      var ds = new DataSource(require('../'), dsConfig);
+
+      connector.initialize(ds, function () {
+        ds.connector.execute('SELECT replication FROM system_schema.keyspaces WHERE keyspace_name=\'' + dsConfig.keyspace + '\'', function (err, rows) {
+          cb(err, rows);
+        });
+      });
+    }
+
     it('create keysapce with no specified replication', function (done) {
       var config = require('rc')('loopback', {
         test: {
@@ -83,14 +93,10 @@ describe('cassandra custom tests', function() {
         }
       }).test.cassandra;
 
-      var ds = new DataSource(require('../'), config);
-
-      cassConnector.initialize(ds, function () {
-        ds.connector.client.execute('SELECT replication FROM system_schema.keyspaces WHERE keyspace_name=\'' + config.keyspace + '\'', function (err, rows) {
-          rows.rows[0].replication.class.should.eql('org.apache.cassandra.locator.SimpleStrategy');
-          rows.rows[0].replication.replication_factor.should.eql('3');
-          done();
-        });
+      queryKeyspace(cassConnector, config, function (err, rows) {
+        rows[0].replication.class.should.eql('org.apache.cassandra.locator.SimpleStrategy');
+        rows[0].replication.replication_factor.should.eql('3');
+        done();
       });
     });
 
@@ -110,14 +116,10 @@ describe('cassandra custom tests', function() {
         }
       }).test.cassandra;
 
-      var ds = new DataSource(require('../'), config);
-
-      cassConnector.initialize(ds, function () {
-        ds.connector.client.execute('SELECT replication FROM system_schema.keyspaces WHERE keyspace_name=\'' + config.keyspace + '\'', function (err, rows) {
-          rows.rows[0].replication.class.should.eql('org.apache.cassandra.locator.NetworkTopologyStrategy');
-          rows.rows[0].replication.dc1.should.eql('1');
-          done();
-        });
+      queryKeyspace(cassConnector, config, function (err, rows) {
+        rows[0].replication.class.should.eql('org.apache.cassandra.locator.NetworkTopologyStrategy');
+        rows[0].replication.dc1.should.eql('1');
+        done();
       });
     });
   });
