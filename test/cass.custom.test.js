@@ -70,7 +70,7 @@ describe('cassandra custom tests', function() {
     m.patStr.should.equal(cassTestString + '100');
   }
 
-  describe.only('create keyspace if it does not exist', function () {
+  describe('create keyspace if it does not exist', function () {
     function queryKeyspace(connector, dsConfig, cb) {
       var ds = new DataSource(require('../'), dsConfig);
 
