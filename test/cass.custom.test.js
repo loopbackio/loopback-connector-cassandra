@@ -8,7 +8,9 @@
 
 /* global getSchema:false */
 
+var DataSource = require('loopback-datasource-juggler').DataSource;
 var cassandra = require('cassandra-driver');
+var cassConnector = require('../lib/cassandra');
 var should = require('should');
 
 var db, CASS, CASS_SORTABLE, CASS_TUPLE_TIME;
@@ -36,7 +38,7 @@ describe('cassandra custom tests', function() {
         },
       });
     CASS_TUPLE_TIME = db.define('CASS_TUPLE_TIME', {
-      tuple: {type: 'Tuple'},
+      tuple: {type: 'Tuple', componentTypes: [{type: 'Tuple', componentTypes: ['TEXT', 'TEXT']}, 'TEXT', 'TEXT', 'TEXT']},
       str: String,
       num: Number,
       time: {type: 'TimeUuid', id: true},
@@ -52,8 +54,8 @@ describe('cassandra custom tests', function() {
     m.str.should.be.type('string');
     m.str.indexOf(cassTestString).should.be.aboveOrEqual(0);
     m.num.should.be.type('number');
-    m.num.should.be.aboveOrEqual(cassTestNum);    
- }
+    m.num.should.be.aboveOrEqual(cassTestNum);
+  }
 
   function verifyExtraRows(err, m) {
     should.not.exists(err);
@@ -66,8 +68,60 @@ describe('cassandra custom tests', function() {
     m.patNum.should.equal(100);
     m.patStr.should.be.type('string');
     m.patStr.should.equal(cassTestString + '100');
- }
+  }
 
+  describe('create keyspace if it does not exist', function () {
+    function queryKeyspace(connector, dsConfig, cb) {
+      var ds = new DataSource(require('../'), dsConfig);
+
+      connector.initialize(ds, function () {
+        ds.connector.execute('SELECT replication FROM system_schema.keyspaces' +
+          ' WHERE keyspace_name=\'' + dsConfig.keyspace + '\'', cb);
+      });
+    }
+
+    it('create keysapce with no specified replication', function (done) {
+      var config = require('rc')('loopback', {
+        test: {
+          cassandra: {
+            host: process.env.CASSANDRA_HOST || 'localhost',
+            port: process.env.CASSANDRA_PORT || 9042,
+            keyspace: 'test0_' + Date.now(),
+            createKeyspace: true,
+          }
+        }
+      }).test.cassandra;
+
+      queryKeyspace(cassConnector, config, function (err, rows) {
+        rows[0].replication.class.should.eql('org.apache.cassandra.locator.SimpleStrategy');
+        rows[0].replication.replication_factor.should.eql('3');
+        done();
+      });
+    });
+
+    it('create keysapce with specified replication', function (done) {
+      var config = require('rc')('loopback', {
+        test: {
+          cassandra: {
+            host: process.env.CASSANDRA_HOST || 'localhost',
+            port: process.env.CASSANDRA_PORT || 9042,
+            keyspace: 'test1_' + Date.now(),
+            createKeyspace: true,
+            replication: {
+              class: 'NetworkTopologyStrategy', 
+              dc1: 1,
+            }
+          }
+        }
+      }).test.cassandra;
+
+      queryKeyspace(cassConnector, config, function (err, rows) {
+        rows[0].replication.class.should.eql('org.apache.cassandra.locator.NetworkTopologyStrategy');
+        rows[0].replication.dc1.should.eql('1');
+        done();
+      });
+    });
+  });
 
   // http://apidocs.strongloop.com/loopback/#persistedmodel-create
   it('create', function(done) {
@@ -306,7 +360,7 @@ describe('cassandra custom tests', function() {
   });
 
   var ID_2, savedTuple, savedTimeUuid;
-  var origTupleArray = ['USA', 'California', 'San Francisco', 'Market St.'];
+  var origTupleArray = [cassandra.types.Tuple.fromArray(['USA', 'California']), 'San Francisco', 'Market', 'St.'];
   var origTuple = cassandra.types.Tuple.fromArray(origTupleArray);
   var origTimeUuid = cassandra.types.TimeUuid.now();
 
@@ -470,24 +524,24 @@ var teamsData = [ // team, league, member
 
 var knownBlueTeamMembers = [{
   member: 'Mary',
-  team: 'Blue', 
+  team: 'Blue',
   registered: false,
   zipCode: 98003,
 }, {
   member: 'Bob',
-  team: 'Blue', 
+  team: 'Blue',
   registered: true,
   zipCode: 98004,
 }];
 
 var knownUnregisteredMembers = [{
   member: 'Mary',
-  team: 'Blue', 
+  team: 'Blue',
   registered: false,
   zipCode: 98003,
 }, {
   member: 'Peter',
-  team: 'Yellow', 
+  team: 'Yellow',
   registered: false,
   zipCode: 98005,
 }];
@@ -585,7 +639,7 @@ describe('materialized views', function() {
         if (err) return done(err);
         rows.should.have.length(2);
         rows.forEach(function(row) {
-          row.__data.should.be.oneOf(knownBlueTeamMembers);          
+          row.__data.should.be.oneOf(knownBlueTeamMembers);
         });
         done();
       });
@@ -597,7 +651,7 @@ describe('materialized views', function() {
         if (err) return done(err);
         rows.should.have.length(2);
         rows.forEach(function(row) {
-          row.__data.should.be.oneOf(knownUnregisteredMembers);          
+          row.__data.should.be.oneOf(knownUnregisteredMembers);
         });
         done();
       });
@@ -608,7 +662,7 @@ describe('materialized views', function() {
       {where: {and: [{team: 'Blue'}, {registered: true}]}}, function(err, rows) {
         if (err) return done(err);
         rows.should.have.length(1);
-        rows[0].__data.should.be.eql(knownBlueTeamMembers[1]);          
+        rows[0].__data.should.be.eql(knownBlueTeamMembers[1]);
         done();
       });
   });
@@ -621,7 +675,7 @@ describe('materialized views', function() {
         rows.forEach(function(row) {
           row.__data.should.not.have.property('member');
           row.__data.should.have.property('league', 'North');
-          row.__data.team.should.be.oneOf(['Blue', 'Green']);          
+          row.__data.team.should.be.oneOf(['Blue', 'Green']);
         });
         done();
       });
@@ -633,10 +687,9 @@ describe('materialized views', function() {
         if (err) return done(err);
         rows.should.have.length(1);
         rows[0].__data.should.not.have.property('member');
-        rows[0].__data.should.have.property('league', 'North');          
-        rows[0].__data.should.have.property('team', 'Green');          
+        rows[0].__data.should.have.property('league', 'North');
+        rows[0].__data.should.have.property('team', 'Green');
         done();
       });
   });
-
 });
