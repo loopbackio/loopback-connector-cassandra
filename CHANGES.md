@@ -1,3 +1,9 @@
+2018-06-01, Version 1.5.0
+=========================
+
+ * able to create non-existing keyspace (#57) (shenghu)
+
+
 2017-12-14, Version 1.3.0
 =========================
 
