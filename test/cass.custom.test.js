@@ -11,6 +11,7 @@
 var DataSource = require('loopback-datasource-juggler').DataSource;
 var cassandra = require('cassandra-driver');
 var cassConnector = require('../lib/cassandra');
+var uuid = require('uuid');
 var should = require('should');
 
 var db, CASS, CASS_SORTABLE, CASS_TUPLE_TIME;
@@ -405,6 +406,114 @@ describe('cassandra custom tests', function() {
     });
   });
 
+  describe('collections', function () {
+    var CASS_COLLECTIONS;
+
+    before(function (done) {
+      CASS_COLLECTIONS = db.define('CASS_COLLECTIONS', {
+        id: { type: String, id: true },
+        mapData: {
+          type: Object,
+          cassandra: {
+            dataType: 'Map<Text, Text>'
+          }
+        },
+        setData: {
+          type: Array,
+          cassandra: {
+            dataType: 'Set<Text>'
+          }
+        },
+        listData: {
+          type: [String],
+          cassandra: {
+            dataType: 'List<Text>'
+          }
+        },
+        strAttr: [String],
+      });
+
+      db.automigrate(['CASS_COLLECTIONS'], done);
+    });
+
+    it('create', function (done) {
+      var data = {
+        id: uuid.v1(),
+        mapData: {key: 'test', value: 'ok'},
+        setData: ['a', 'b'],
+        listData: ['1', '2'],
+        strAttr: ['array', 'with', 'no', 'datatype'],
+      };
+      CASS_COLLECTIONS.create(data, function (err, instance) {
+        should.not.exists(err);
+
+        var m = instance.toJSON();
+        m.id.should.equal(data.id);
+        m.mapData.should.deepEqual(data.mapData);
+
+        m.setData.should.be.an.Array();
+        m.setData.should.deepEqual(data.setData);
+
+        m.listData.should.be.an.Array();
+        m.listData.should.deepEqual(data.listData);
+
+        m.strAttr.should.deepEqual(data.strAttr);
+        ROW = instance;
+        ID = instance.id;
+        done();
+      });
+    });
+
+    it('updateAttributes', function (done) {
+      var data = {
+        id: ID, 
+        mapData: {value: 'updated'},
+        listData: ['3'],
+        setData: ['d'],
+        strAttr: ['update', 'array', 'with', 'no', 'datatype'],
+      };
+      ROW.updateAttributes(data, function (err, instance) {
+        should.not.exists(err);
+
+        var m = instance.toJSON();
+        m.id.should.be.equal(ID);
+        m.mapData.should.deepEqual(data.mapData);
+        should.not.exists(m.mapData.key);
+
+        m.listData.should.be.an.Array();
+        m.listData.should.deepEqual(data.listData);
+
+        m.setData.should.be.an.Array();
+        m.setData.should.deepEqual(data.setData);
+
+        m.strAttr.should.deepEqual(data.strAttr);
+
+        ROW = instance;
+        done();
+      });
+    });
+
+    it('findById', function (done) {
+      CASS_COLLECTIONS.findById(ID, function (err, instance) {
+        should.not.exists(err);
+
+        var m = instance.toJSON();
+        var expected = ROW.toJSON()
+        m.id.should.be.equal(ID);
+        m.mapData.should.deepEqual(expected.mapData);
+
+        m.listData.should.be.an.Array();
+        m.listData.should.deepEqual(expected.listData);
+
+        m.setData.should.be.an.Array();
+        m.setData.should.deepEqual(expected.setData);
+
+        m.strAttr.should.deepEqual(expected.strAttr);
+        done();
+      });
+    });
+  });  
+
   var targetTable = 'CASS_SORTABLE';
 
   it('discoverPrimaryKeys', function(done) {
@@ -456,7 +565,6 @@ describe('cassandra custom tests', function() {
   it('discoverAndBuildModels', function(done) {
     db.discoverAndBuildModels(targetTable, {}, function(err, data) {
       if (err) return done(err);
-      // console.log('============== discoverAndBuildModels:', err, data);
       done();
     });
   });
