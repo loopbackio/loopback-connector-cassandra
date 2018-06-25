@@ -1,3 +1,9 @@
+2018-06-25, Version 1.6.0
+=========================
+
+ * add support to cassandra collections (#59) (shenghu)
+
+
 2018-06-01, Version 1.5.0
 =========================
 
