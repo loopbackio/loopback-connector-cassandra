@@ -1,0 +1,11 @@
+{
+  "2c32dc4500f2315450505c8a7039d528": "Składnia {{regex}} programu {{Cassandra}} nie respektuje flagi {{`i`}}",
+  "31822fc79a4244dc35bc2ec8b7d19002": "Ostrzeżenie: nieobsługiwane filtry: {0}",
+  "3e80d9f78fc702c4fd433ebf67573c2f": "Nie zaimplementowano przez konektor {{Cassandra}}",
+  "45fe89e3a71f43b9bffcbca82c75012c": "Składnia {{regex}} programu {{Cassandra}} nie respektuje flagi {{`g`}}",
+  "57512a471969647e8eaa2509cc292018": "{{callback}} musi być funkcją",
+  "6ce5c3a3d305e965ff06e2b3e16e1252": "Właściwość {{options}} musi być obiektem {{object}}: {0}",
+  "8a8027a7e5f410af28805c29555648f8": "Składnia {{regex}} programu {{Cassandra}} nie respektuje flagi {{`m`}}",
+  "a0078d732b2dbabf98ed2efcdb55b402": "{{table}} jest wymaganym argumentem łańcuchowym: {0}"
+}
+
