@@ -1,3 +1,13 @@
+2018-07-17, Version 1.7.0
+=========================
+
+ * Add support to composite keys for updateAttributes (shenghu)
+
+ * [WebFM] cs/pl/ru translation (candytangnb)
+
+ * add @shenghu and update other CODEOWNERS (Diana Lau)
+
+
 2018-06-25, Version 1.6.0
 =========================
 
