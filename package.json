@@ -23,7 +23,7 @@
     "cassandra-map": "0.1.7",
     "debug": "^2.2.0",
     "loopback-connector": "^4.0.0",
-    "strong-globalize": "^2.8.2"
+    "strong-globalize": "^4.1.2"
   },
   "devDependencies": {
     "bluebird": "^3.5.0",
