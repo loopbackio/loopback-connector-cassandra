@@ -1,3 +1,11 @@
+2018-09-22, Version 1.7.1
+=========================
+
+ * chore: update dependencies (Diana Lau)
+
+ * use cassandra contact points provided via settings (Hank)
+
+
 2018-07-17, Version 1.7.0
 =========================
 
