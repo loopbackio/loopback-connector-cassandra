@@ -12,6 +12,7 @@
   "engines": {
     "node": ">=6"
   },
+  "author": "IBM Corp.",
   "main": "index.js",
   "scripts": {
     "pretest": "node test/setupDb.js",
