@@ -16,7 +16,7 @@
   "main": "index.js",
   "scripts": {
     "pretest": "node test/setupDb.js",
-    "test": "mocha -R spec --timeout 10000 --require test/init.js test/*.test.js"
+    "test": "mocha -R spec --timeout 15000 --require test/init.js test/*.test.js"
   },
   "dependencies": {
     "async": "^2.3.0",
