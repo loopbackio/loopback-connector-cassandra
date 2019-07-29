@@ -694,7 +694,7 @@ describe('cassandra custom tests', function() {
     db.discoverPrimaryKeys(targetTable, {}, function(err, data) {
       if (err) return done(err);
       data.should.exist;
-      data.should.eql(['patNum','patBool','patStr','str','num']);
+      data.sort().should.eql(['patNum','patBool','patStr','str','num'].sort());
       done();
     });
   });
