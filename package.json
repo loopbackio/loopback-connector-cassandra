@@ -10,7 +10,7 @@
     "Connector"
   ],
   "engines": {
-    "node": ">=6"
+    "node": ">=8.9"
   },
   "author": "IBM Corp.",
   "main": "index.js",
