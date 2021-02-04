@@ -22,8 +22,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Cassandra Setup
-      - uses: fabasoad/setup-cassandra-action@v1.0.0
-      - uses: actions/checkout@v1
+      uses: fabasoad/setup-cassandra-action@v1.0.0
+      uses: actions/checkout@v1
         with:
           host: 'localhost'
           port: 9042
