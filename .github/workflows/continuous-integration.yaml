@@ -25,7 +25,6 @@ jobs:
 
     - name: Cassandra Setup
       uses: fabasoad/setup-cassandra-action@v1.0.0
-      # uses: actions/checkout@v1
         with:
           host: '192.13.131.0'
           port: 9042
