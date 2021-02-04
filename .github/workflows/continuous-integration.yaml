@@ -17,7 +17,7 @@ jobs:
 
   steps:
      - name: Git checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v1
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
@@ -27,10 +27,8 @@ jobs:
     - name: Cassandra Setup
       - uses: fabasoad/setup-cassandra-action@v1.0.0
         with:
-          host: '192.13.131.0'
+          host: 'localhost'
           port: 9042
-          username: ${{ secrets.CASSANDRA_USERNAME }}
-          password: ${{ secrets.CASSANDRA_PASSWORD }}
           connect-timeout: 30
           keyspace: test
           scripts_path: './test/init.js'
