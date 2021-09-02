@@ -47,7 +47,7 @@ printf "\n${CYAN}Image successfully built.${PLAIN}\n"
 
 ## run the cassandra container
 printf "\n${RED}>> Starting the cassandra container${PLAIN} ${GREEN}...${PLAIN}"
-CONTAINER_STATUS=$(docker run --name $CASSANDRA_CONTAINER -p $PORT:9042 -d cassandra:latest 2>&1)
+CONTAINER_STATUS=$(docker run --name $CASSANDRA_CONTAINER -p $PORT:9042 -d cassandra:3.11 2>&1)
 if [[ "$CONTAINER_STATUS" == *"Error"* ]]; then
     printf "\n\n${CYAN}Status: ${PLAIN}${RED}Error starting container. Terminating setup.${PLAIN}\n\n"
     exit 1
@@ -82,7 +82,7 @@ while [ "$OUTPUT" -ne 0 ] && [ "$TIMEOUT" -gt 0 ]
     done
 
 if [ "$TIMEOUT" -le 0 ]; then
-    printf "\n\n${CYAN}Status: ${PLAIN}${RED}Failed to created keyspace. Terminating setup.${PLAIN}\n\n"
+    printf "\n\n${CYAN}Status: ${PLAIN}${RED}Failed to create keyspace. Terminating setup.${PLAIN}\n\n"
     exit 1
 fi
 printf "\n${CYAN}Successfully created keyspace.${PLAIN}\n"
